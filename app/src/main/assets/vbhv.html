@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebView Interaction</title>
+    <script type="text/javascript">
+        function handleBase64ByteArrayFromAndroid(base64String) {
+            var byteArray = Uint8Array.from(atob(base64String), c => c.charCodeAt(0));
+            alert("Received Base64 binary data from Android");
+            console.log(byteArray);
+        }
+
+        function handleHexByteArrayFromAndroid(hexString) {
+            var byteArray = new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+            alert("Received Hex binary data from Android");
+            console.log(byteArray);
+        }
+
+        function handleDirectByteArrayFromAndroid(byteArray) {
+            var uint8Array = new Uint8Array(byteArray);
+            alert("Received direct byte array from Android");
+            console.log(uint8Array);
+        }
+
+        function sendBase64DataToAndroid() {
+            var byteArray = new Uint8Array([72, 101, 108, 108, 111]);
+            var base64String = btoa(String.fromCharCode.apply(null, byteArray));
+            Android.receiveBase64Data(base64String);
+        }
+
+        function sendHexDataToAndroid() {
+            var byteArray = new Uint8Array([72, 101, 108, 108, 111]);
+            var hexString = byteArrayToHex(byteArray);
+            Android.receiveHexData(hexString);
+        }
+
+        function sendDirectByteArrayToAndroid() {
+            var byteArray = new Uint8Array([72, 101, 108, 108, 111]);
+            Android.receiveDirectByteArray(Array.from(byteArray));
+        }
+
+        function byteArrayToHex(byteArray) {
+            return Array.prototype.map.call(byteArray, function(byte) {
+                return ('0' + (byte & 0xFF).toString(16)).slice(-2);
+            }).join('');
+        }
+    </script>
+</head>
+<body style="display:flex;flex-direction:column">
+<h1>WebView</h1>
+<button style="margin:10px" type="button" onclick="sendBase64DataToAndroid()">Send Base64 Data to Android</button>
+<button style="margin:10px" type="button" onclick="sendHexDataToAndroid()">Send Hex Data to Android</button>
+<button style="margin:10px" type="button" onclick="sendDirectByteArrayToAndroid()">Send Direct Byte Array to Android</button>
+</body>
+</html>
